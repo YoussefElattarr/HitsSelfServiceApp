@@ -1,0 +1,27 @@
+{
+  "cli": {
+    "version": ">= 2.6.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "../keys/pc-api-8637649103156972294-900-5573d8113444.json"
+      },
+      "ios":{
+        "appleId":"hits.system@hits-consulting.com",
+        "ascAppId":"6444469981",
+        "appleTeamId":"8477GANBWB"
+      }
+    }
+  }
+}

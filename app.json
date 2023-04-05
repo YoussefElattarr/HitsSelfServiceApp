@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "hr-app",
-    "slug": "hr-app",
-    "version": "1.0.0",
+    "name": "Attendance Hits-Wind",
+    "slug": "attendanceHitsWind",
+    "version": "1.0.5",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/hits.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,16 +18,33 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.attendance.hitswind",
+      "buildNumber": "2",
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes in order to check in and out of the office",
+        "NSLocationWhenInUseUsageDescription": "This app uses your location to make sure that you are physically at the office when scanning the barcode"
+      }
     },
     "android": {
+      "package": "com.attendance.hitswind",
+      "versionCode": 5,
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/hits.png",
         "backgroundColor": "#FFFFFF"
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9f288d94-3768-4fa3-a0ca-6fa560ea74b4"
+      }
     }
   }
 }
