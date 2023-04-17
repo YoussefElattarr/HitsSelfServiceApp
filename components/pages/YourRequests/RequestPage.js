@@ -329,11 +329,7 @@ const YourRequest = (props) => {
                           mode="outlined"
                           label={d.LABEL}
                           editable={isPending ? true : false}
-                          value={
-                            value
-                              ? value
-                              : data["flex_field"][d.API_NAME]
-                          }
+                          value={value ? value : data["flex_field"][d.API_NAME]}
                           onChangeText={(value) => {
                             onChange(value);
                           }}
@@ -362,9 +358,7 @@ const YourRequest = (props) => {
                             label={d.LABEL}
                             editable={isPending ? true : false}
                             value={
-                              value
-                                ? value
-                                : data["flex_field"][d.API_NAME]
+                              value ? value : data["flex_field"][d.API_NAME]
                             }
                             multiline={true}
                             onChangeText={(value) => {
@@ -393,7 +387,9 @@ const YourRequest = (props) => {
                       control={control}
                       name={d.API_NAME}
                       defaultValue={
-                        new Date(data["flex_field"][d.API_NAME])
+                        data["flex_field"][d.API_NAME] === ""
+                          ? null
+                          : new Date(data["flex_field"][d.API_NAME])
                       }
                       render={({ field: { onChange, value, onBlur } }) => (
                         <>
@@ -417,9 +413,9 @@ const YourRequest = (props) => {
                               value={
                                 value
                                   ? value
-                                  : new Date(
-                                      data["flex_field"][d.API_NAME]
-                                    )
+                                  : data["flex_field"][d.API_NAME] === ""
+                                  ? new Date()
+                                  : new Date(data["flex_field"][d.API_NAME])
                               }
                               onChange={(value, selectedDate) => {
                                 onChange(selectedDate);
@@ -515,9 +511,7 @@ const YourRequest = (props) => {
                           <Switch
                             disabled={isPending ? false : true}
                             value={
-                              value
-                                ? value
-                                : data["flex_field"][d.API_NAME]
+                              value ? value : data["flex_field"][d.API_NAME]
                             }
                             onValueChange={(value) => {
                               //onToggleSwitch;
@@ -547,11 +541,7 @@ const YourRequest = (props) => {
                           mode="outlined"
                           label={d.LABEL}
                           editable={isPending ? true : false}
-                          value={
-                            value
-                              ? value
-                              : data["flex_field"][d.API_NAME]
-                          }
+                          value={value ? value : data["flex_field"][d.API_NAME]}
                           keyboardType="number-pad"
                           inputMode="numeric"
                           onChangeText={(value) => {
@@ -587,11 +577,7 @@ const YourRequest = (props) => {
                           mode="outlined"
                           label={d.LABEL}
                           editable={isPending ? true : false}
-                          value={
-                            value
-                              ? value
-                              : data["flex_field"][d.API_NAME]
-                          }
+                          value={value ? value : data["flex_field"][d.API_NAME]}
                           onChangeText={(value) => {
                             onChange(value);
                           }}
