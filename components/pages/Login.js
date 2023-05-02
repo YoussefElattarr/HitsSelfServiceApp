@@ -81,6 +81,7 @@ export default class Login extends Component {
             },
           })
             .then(async (res) => {
+              console.log(res.data)
               if (res.data.Authentication === "failed") {
                 Alert.alert("Wrong email or password");
               } else {

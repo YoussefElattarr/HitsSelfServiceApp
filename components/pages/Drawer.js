@@ -14,6 +14,8 @@ import AttendanceStack from "./Attendance/AttendanceStack";
 import ApplyForRequestsStack from "./ApplyForRequests/ApplyForRequestsStack";
 import YourRequestsStack from "./YourRequests/YourRequestsStack";
 import NotificationWorkListStack from "./NotificationWorkList/NotificationWorkListStack";
+import AttendanceLocationStack from "./AttendanceLocation/AttendanceLocationStack";
+import AttendanceEmployeesLocationStack from "./AttendanceEmployeesLocation/AttendanceEmployeesLocationStack";
 
 const Drawer = createDrawerNavigator();
 
@@ -112,6 +114,32 @@ export default function MyDrawer() {
         {() => (
           <ScreenWithInteractionManager>
             <AttendanceStack />
+          </ScreenWithInteractionManager>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen
+        name="AttendanceLocationStack"
+        // component={AttendanceStack}
+        options={{
+          title: "Attendance Location",
+        }}
+      >
+        {() => (
+          <ScreenWithInteractionManager>
+            <AttendanceLocationStack />
+          </ScreenWithInteractionManager>
+        )}
+      </Drawer.Screen>
+      <Drawer.Screen
+        name="AttendanceEmployeesLocationStack"
+        // component={AttendanceStack}
+        options={{
+          title: "Attendance Employees Location",
+        }}
+      >
+        {() => (
+          <ScreenWithInteractionManager>
+            <AttendanceEmployeesLocationStack />
           </ScreenWithInteractionManager>
         )}
       </Drawer.Screen>

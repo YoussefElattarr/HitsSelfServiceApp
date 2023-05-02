@@ -40,7 +40,7 @@ export default function BarCode(props){
         setScanned(true);
         const username = await AsyncStorage.getItem('username')
         await axios({
-            url: "https://eg32mvlk9thcnja-prod.adb.uk-london-1.oraclecloudapps.com/ords/hits_prod/employees/createTransaction",
+            url: "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/employees/createTransaction",
             method: "post",
             headers: {
               "Content-Type": "application/json"
