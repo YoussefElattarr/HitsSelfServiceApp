@@ -14,6 +14,8 @@ import {
   TextInput,
   Button,
   Appbar,
+  Card,
+  List,
   ActivityIndicator,
 } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,17 +27,20 @@ import {
   VictoryTheme,
   VictoryBar,
 } from "victory-native";
+import { stringify } from "qs";
 
 export default function Home(props) {
   const { height } = useWindowDimensions();
 
   const [username, setUsername] = useState();
+  const [personID, setPersonID] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [approvedRequests, setApprovedRequests] = useState([]);
   const [sfaRequests, setSfaRequests] = useState([]);
   const [rejectedRequests, setRejectedRequests] = useState([]);
+  const [profileInfo, setProfileInfo] = useState(null);
 
   const pieData = [
     {
@@ -72,22 +77,22 @@ export default function Home(props) {
     }, 2000);
   }, []);
 
+  const getUsernameAndPersonID = async () => {
+    const asyncStorageKeys = await AsyncStorage.getAllKeys();
+    if (asyncStorageKeys.length === 0) {
+      nav.reset({
+        index: 0,
+        routes: [{ name: "Login" }],
+      });
+    } else {
+      const usernameFromStorage = await AsyncStorage.getItem("username");
+      const personIDFromStorage = await AsyncStorage.getItem("person_id");
+      setUsername(usernameFromStorage);
+      setPersonID(personIDFromStorage);
+    }
+  };
   useEffect(() => {
-    (async () => {
-      const asyncStorageKeys = await AsyncStorage.getAllKeys();
-      if (asyncStorageKeys.length === 0) {
-        nav.reset({
-          index: 0,
-          routes: [{ name: "Login" }],
-        });
-      } else {
-        const usernameFromStorage = await AsyncStorage.getItem("username");
-        setUsername(usernameFromStorage);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
+    getUsernameAndPersonID()
     axios
       .get(
         "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/ssmb/get_todo_notifications",
@@ -150,9 +155,29 @@ export default function Home(props) {
       });
   }, [refreshing == false]);
 
+  useEffect(() => {
+    axios
+      .get(
+        "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/ssmb/get_profile_info",
+        {
+          params: {
+            p_requester_id: null,
+            p_person_id: personID,
+          },
+        }
+      )
+      .then((res) => {
+        setProfileInfo(res.data)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  },[personID])
   const nav = useNavigation();
 
-  return notifications.length === 0 ? (
+  return notifications.length === 0 ||
+    //JSON.stringify(profileInfo) === "{}"
+    profileInfo === null ? (
     <View
       style={{
         position: "absolute",
@@ -167,25 +192,46 @@ export default function Home(props) {
       <ActivityIndicator animating={true} color="#2E3B55" />
     </View>
   ) : (
-    <View>
-      <SafeAreaView>
+    <View style={{ flex: 1, backgroundColor: "rgba(255, 255, 255, 0.9)" }}>
+      <SafeAreaView style={{ flex: 1 }}>
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-          style={{ height: height }}
+          style={{ flex: 1 }}
         >
           <View style={styles.banner}>
             <Avatar.Image
               size={100}
               source={{
-                uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                //uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
+                uri: profileInfo.image,
               }}
             />
             <Text style={{ marginTop: "5%", fontSize: 18, color: "#ffffff" }}>
               Hello, {username}
             </Text>
           </View>
+          <Card key={profileInfo ? profileInfo.person_id : "default"}>
+            <Card.Title title="Info" />
+            <Card.Content>
+              <List.Item
+                title="Employee #"
+                description={profileInfo.employee_num}
+              />
+              <List.Item title="Name" description={profileInfo.full_name} />
+              <List.Item title="Job" description={profileInfo.job} />
+              <List.Item title="Position" description={profileInfo.position} />
+              <List.Item
+                title="Department"
+                description={profileInfo.department}
+              />
+              <List.Item
+                title="Supervisor"
+                description={profileInfo.supervisor}
+              />
+            </Card.Content>
+          </Card>
           <Text style={{ marginTop: "5%", marginLeft: "2%", fontSize: 32 }}>
             Your Notifications
           </Text>
@@ -195,17 +241,18 @@ export default function Home(props) {
           <Text style={{ marginTop: "10%", marginLeft: "2%", fontSize: 32 }}>
             Your Requests
           </Text>
-          <View style={{ width: 300, height: 300 }}>
+          <View style={{ width: 300, height: 300, marginBottom: "20%" }}>
             <VictoryPie
               data={pieData}
               colorScale={["#00BFFF", "#FFD700", "#4CAF50", "#FF6347"]}
               innerRadius={70}
-              labels={({ datum }) => datum.y === 0 ? null : `${datum.x}: ${datum.y}`}
+              labels={({ datum }) =>
+                datum.y === 0 ? null : `${datum.x}: ${datum.y}`
+              }
               labelRadius={({ innerRadius }) => innerRadius + 30}
               style={{ labels: { fontSize: 11 } }}
               padAngle={3}
             />
-            
           </View>
         </ScrollView>
       </SafeAreaView>

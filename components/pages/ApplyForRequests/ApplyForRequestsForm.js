@@ -22,6 +22,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 const ApplyForRequestsForm = (props) => {
   const [data, setData] = useState([]);
+  const [employees, setEmployees] = useState([]);
   const [dropDownData, setDropDownData] = useState({});
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
@@ -134,9 +135,27 @@ const ApplyForRequestsForm = (props) => {
         console.log(error);
         alert(error);
       });
+    axios
+      .get(
+        "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/ssmb/get_employees_with_profiles",
+        {
+          params: {
+            p_person_id: null,
+            p_requester_id: null,
+          },
+        }
+      )
+      .then(function (response) {
+        let arr = response.data;
+        setEmployees(arr);
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert(error);
+      });
   }, []);
 
-  return data.length === 0 ? (
+  return data.length === 0 || employees.length === 0 ? (
     <View
       style={{
         position: "absolute",
@@ -226,24 +245,31 @@ const ApplyForRequestsForm = (props) => {
               <>
                 <Text style={{ marginTop: "5%" }}>Choose an Employee</Text>
                 <SelectDropdown
-                  data={[
-                    {
-                      label: "Test1",
-                      value: 1,
-                    },
-                    {
-                      label: "Test2",
-                      value: 2,
-                    },
-                  ]}
+                  data={employees}
                   onSelect={(selectedItem, index) => {
-                    onChange(selectedItem.value);
+                    onChange(selectedItem.person_id);
                   }}
                   buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem.label;
+                    return selectedItem.full_name;
                   }}
-                  rowTextForSelection={(item, index) => {
-                    return item.label;
+                  // rowTextForSelection={(item, index) => {
+                  //   return item.label;
+                  // }}
+                  renderCustomizedRowChild={(item, index) => {
+                    return (
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingHorizontal: 18,
+                        }}
+                      >
+                        <Text>{item.employee_num} </Text>
+                        <Text>{item.full_name}</Text>
+                      </View>
+                    );
                   }}
                   search={true}
                   buttonStyle={{ width: "100%" }}

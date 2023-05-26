@@ -29,7 +29,7 @@ export default class Login extends Component {
     });
   };
 
-  onLogin = async () => {
+  onLogin =  () => {
     let flag = false;
     if (this.state.username.length === 0) {
       flag = true;
@@ -46,13 +46,16 @@ export default class Login extends Component {
       });
     }
     if (!flag) {
-      let client_id = "vsNsWrbgn7FnL0dfPlmx9Q..";
-      let client_secret = "Ft0XBHDTEf29kd2uNxAJyw..";
+      //let client_id = "vsNsWrbgn7FnL0dfPlmx9Q..";
+      let client_id = "_30Ow1Sa9ZPedyVa-YQNsg..";
+      //let client_secret = "Ft0XBHDTEf29kd2uNxAJyw..";
+      let client_secret = "-MZmW5JnTExHMnNSi1uwyw.."
       let bufferObj = Buffer.from(client_id + ":" + client_secret, "utf8");
       let base64String = bufferObj.toString("base64");
-      await axios({
+      axios({
         method: "post",
-        url: "https://eg32mvlk9thcnja-prod.adb.uk-london-1.oraclecloudapps.com/ords/hits_prod/oauth/token",
+        //url: "https://eg32mvlk9thcnja-prod.adb.uk-london-1.oraclecloudapps.com/ords/hits_prod/oauth/token",
+        url: "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/oauth/token",
         data: qs.stringify({
           grant_type: "client_credentials",
           client_id: client_id,
@@ -64,12 +67,14 @@ export default class Login extends Component {
         },
       })
         .then(async (res) => {
+          console.log(res.data)
           const hashedPassword = await Crypto.digestStringAsync(
             Crypto.CryptoDigestAlgorithm.SHA256,
             this.state.password
           );
-          await await axios({
-            url: "https://eg32mvlk9thcnja-prod.adb.uk-london-1.oraclecloudapps.com/ords/hits_prod/ACS/CHECKLOGIN",
+          axios({
+            //url: "https://eg32mvlk9thcnja-prod.adb.uk-london-1.oraclecloudapps.com/ords/hits_prod/ACS/CHECKLOGIN",
+            url: "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/ACS/CHECKLOGIN",
             method: "post",
             headers: {
               "Content-Type": "application/json",
@@ -81,16 +86,17 @@ export default class Login extends Component {
             },
           })
             .then(async (res) => {
-              console.log(res.data)
-              if (res.data.Authentication === "failed") {
-                Alert.alert("Wrong email or password");
-              } else {
+              console.log(res.data);
+              if (res.data.Authentication === "success") {
                 await AsyncStorage.setItem("username", this.state.username);
+                await AsyncStorage.setItem("person_id", res.data.Person_id);
                 // this.props.navigation.navigate("Drawer")
                 this.props.navigation.reset({
                   index: 0,
                   routes: [{ name: "Drawer" }],
                 });
+              } else {
+                Alert.alert("Wrong email or password");
               }
             })
             .catch((err) => {

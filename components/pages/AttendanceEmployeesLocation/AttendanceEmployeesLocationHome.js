@@ -95,17 +95,16 @@ const AttendanceEmployeesLocationHome = () => {
       url: "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/employees/createTransaction_Location",
       method: "post",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      data: submitData
+      data: submitData,
     })
-    .then((res) => {
-      alert(res.data.msg)
-    })
-    .catch((err) => {
-      alert(err)
-    })
-
+      .then((res) => {
+        alert(res.data.msg);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   };
   return latitude === null || longitude === null ? (
     <View
@@ -147,7 +146,7 @@ const AttendanceEmployeesLocationHome = () => {
                   let location_name = locations.filter((loc) => {
                     return loc.location_id === selectedItem.location_id;
                   });
-                  dropdownRef.current.reset() 
+                  dropdownRef.current.reset();
                   setDefaultLoc(
                     location_name.length === 0
                       ? null
@@ -157,8 +156,24 @@ const AttendanceEmployeesLocationHome = () => {
                 buttonTextAfterSelection={(selectedItem, index) => {
                   return selectedItem.full_name;
                 }}
-                rowTextForSelection={(item, index) => {
-                  return item.full_name;
+                // rowTextForSelection={(item, index) => {
+                //   return item.full_name;
+                // }}
+                renderCustomizedRowChild={(item, index) => {
+                  return (
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        paddingHorizontal: 18,
+                      }}
+                    >
+                      <Text>{item.employee_num} </Text>
+                      <Text>{item.full_name}</Text>
+                    </View>
+                  );
                 }}
                 search={true}
                 buttonStyle={{ width: "100%" }}

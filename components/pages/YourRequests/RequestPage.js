@@ -24,6 +24,7 @@ let count = 0;
 const YourRequest = (props) => {
   const [metaData, setMetaData] = useState([]);
   const [data, setData] = useState({});
+  const [employees, setEmployees] = useState([]);
   const [actions, setActions] = useState([]);
   const [isPending, setIsPending] = useState(false);
   const [dropDownData, setDropDownData] = useState({});
@@ -80,6 +81,24 @@ const YourRequest = (props) => {
         setMetaData(arr);
       })
       .catch((err) => console.log(err));
+    axios
+      .get(
+        "https://eg32mvlk9thcnja-dev.adb.uk-london-1.oraclecloudapps.com/ords/hits_dev/ssmb/get_employees_with_profiles",
+        {
+          params: {
+            p_person_id: null,
+            p_requester_id: null,
+          },
+        }
+      )
+      .then(function (response) {
+        let arr = response.data;
+        setEmployees(arr);
+      })
+      .catch(function (error) {
+        console.log(error);
+        alert(error);
+      });
   }, []);
 
   const handleButtonPressed = (data, method, url) => {
@@ -189,7 +208,9 @@ const YourRequest = (props) => {
       }
     }
   };
-  return JSON.stringify(data) === "{}" || metaData.length === 0 ? (
+  return JSON.stringify(data) === "{}" ||
+    metaData.length === 0 ||
+    employees.length === 0 ? (
     <View
       style={{
         position: "absolute",
@@ -278,24 +299,31 @@ const YourRequest = (props) => {
               <>
                 <Text style={{ marginTop: "5%" }}>Choose an Employee</Text>
                 <SelectDropdown
-                  data={[
-                    {
-                      label: "Test1",
-                      value: 1,
-                    },
-                    {
-                      label: "Test2",
-                      value: 2,
-                    },
-                  ]}
+                  data={employees}
                   onSelect={(selectedItem, index) => {
-                    onChange(selectedItem.value);
+                    onChange(selectedItem.person_id);
                   }}
                   buttonTextAfterSelection={(selectedItem, index) => {
-                    return selectedItem.label;
+                    return selectedItem.full_name;
                   }}
-                  rowTextForSelection={(item, index) => {
-                    return item.label;
+                  // rowTextForSelection={(item, index) => {
+                  //   return item.label;
+                  // }}
+                  renderCustomizedRowChild={(item, index) => {
+                    return (
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          paddingHorizontal: 18,
+                        }}
+                      >
+                        <Text>{item.employee_num} </Text>
+                        <Text>{item.full_name}</Text>
+                      </View>
+                    );
                   }}
                   //defaultValueByIndex={0}
                   disabled={isPending ? false : true}
